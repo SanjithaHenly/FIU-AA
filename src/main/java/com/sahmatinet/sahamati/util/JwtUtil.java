@@ -1,4 +1,4 @@
-package com.sahmatinet.sahamati;
+package com.sahmatinet.sahamati.util;
 
 import java.security.SecureRandom;
 import java.util.Base64;

@@ -1,69 +1,95 @@
 package com.sahmatinet.sahamati.model;
 
-public class SecretResponse {
-    private String ver;
-    private String timestamp;
-    private String txnId;
-    private String entityId;
-    private String secret;
-    private String expiresOn;
+import java.io.Serializable;
 
-    public SecretResponse(String ver, String timestamp, String txnId, String entityId, String secret, String expiresOn) {
-        this.ver = ver;
-        this.timestamp = timestamp;
-        this.txnId = txnId;
-        this.entityId = entityId;
-        this.secret = secret;
-        this.expiresOn = expiresOn;
-    }
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-    // Getters and Setters
+public class SecretResponse implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7304937352510161043L;
+	@JsonProperty("ver")
+	private String ver;
+	@JsonProperty("timestamp")
+	private String timestamp;
+	@JsonProperty("txnId")
+	private String txnId;
+	@JsonProperty("entityId")
+	private String entityId;
+	@JsonProperty("secret")
+	private String secret;
+	@JsonProperty("expiresOn")
+	private String expiresOn;
 
-    public String getVer() {
-        return ver;
-    }
+	public SecretResponse(String ver, String timestamp, String txnId, String entityId, String secret,
+			String expiresOn) {
+		this.ver = ver;
+		this.timestamp = timestamp;
+		this.txnId = txnId;
+		this.entityId = entityId;
+		this.secret = secret;
+		this.expiresOn = expiresOn;
+	}
 
-    public void setVer(String ver) {
-        this.ver = ver;
-    }
+	// Getters and Setters
+	@JsonProperty("ver")
+	public String getVer() {
+		return ver;
+	}
 
-    public String getTimestamp() {
-        return timestamp;
-    }
+	@JsonProperty("ver")
+	public void setVer(String ver) {
+		this.ver = ver;
+	}
 
-    public void setTimestamp(String timestamp) {
-        this.timestamp = timestamp;
-    }
+	@JsonProperty("timestamp")
+	public String getTimestamp() {
+		return timestamp;
+	}
 
-    public String getTxnId() {
-        return txnId;
-    }
+	@JsonProperty("timestamp")
+	public void setTimestamp(String timestamp) {
+		this.timestamp = timestamp;
+	}
 
-    public void setTxnId(String txnId) {
-        this.txnId = txnId;
-    }
+	@JsonProperty("txnId")
+	public String getTxnId() {
+		return txnId;
+	}
 
-    public String getEntityId() {
-        return entityId;
-    }
+	@JsonProperty("txnId")
+	public void setTxnId(String txnId) {
+		this.txnId = txnId;
+	}
 
-    public void setEntityId(String entityId) {
-        this.entityId = entityId;
-    }
+	@JsonProperty("entityId")
+	public String getEntityId() {
+		return entityId;
+	}
 
-    public String getSecret() {
-        return secret;
-    }
+	@JsonProperty("entityId")
+	public void setEntityId(String entityId) {
+		this.entityId = entityId;
+	}
 
-    public void setSecret(String secret) {
-        this.secret = secret;
-    }
+	@JsonProperty("secret")
+	public String getSecret() {
+		return secret;
+	}
 
-    public String getExpiresOn() {
-        return expiresOn;
-    }
+	@JsonProperty("secret")
+	public void setSecret(String secret) {
+		this.secret = secret;
+	}
 
-    public void setExpiresOn(String expiresOn) {
-        this.expiresOn = expiresOn;
-    }
+	@JsonProperty("expiresOn")
+	public String getExpiresOn() {
+		return expiresOn;
+	}
+
+	@JsonProperty("expiresOn")
+	public void setExpiresOn(String expiresOn) {
+		this.expiresOn = expiresOn;
+	}
 }
