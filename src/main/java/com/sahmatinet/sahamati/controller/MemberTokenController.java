@@ -1,5 +1,7 @@
 package com.sahmatinet.sahamati.controller;
 
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -14,24 +16,15 @@ import com.sahmatinet.sahamati.util.JwtUtil;
 @RequestMapping("/iam/v1/entity/token")
 public class MemberTokenController {
 
-    @Autowired
-    private JwtUtil jwtUtil;
+	@Autowired
+	private JwtUtil jwtUtil;
 
-    // Inject member credentials from application.properties
-    @Value("${member.id}")
-    private String configuredMemberId;
+	@PostMapping("/generate")
+	public ResponseEntity<Map<String, Object>> generateMemberToken(@RequestParam String id,
+			@RequestParam String secret) {
 
-    @Value("${member.secret}")
-    private String configuredMemberSecret;
+		Map<String, Object> token = jwtUtil.generateToken(id);
+		return ResponseEntity.ok(token);
 
-    @PostMapping("/generate")
-    public ResponseEntity<String> generateMemberToken(@RequestParam String id, @RequestParam String secret) {
-        // Validate against configured values
-        if (id.equals(configuredMemberId) && secret.equals(configuredMemberSecret)) {
-            String token = jwtUtil.generateToken(id);
-            return ResponseEntity.ok(token);
-        }
-        // Return unauthorized response if validation fails
-        return ResponseEntity.status(401).body("Invalid Member ID or Secret");
-    }
+	}
 }

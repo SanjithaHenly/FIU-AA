@@ -1,58 +1,52 @@
 package com.sahmatinet.sahamati.controller;
-
-import java.security.SecureRandom;
-import java.util.Base64;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.sahmatinet.sahamati.model.SecretRequest;
 import com.sahmatinet.sahamati.model.SecretResponse;
-import com.sahmatinet.sahamati.util.JwtUtil;
+import com.sahmatinet.sahamati.service.SecretService;
 
 @RestController
-@RequestMapping("/iam/v1/entity")
+@RequestMapping("/iam/v1/entity/secret")
 public class SecretController {
-	
-	@Autowired
-    private JwtUtil jwtUtil;
 
-    @PostMapping("/secret/read")
-    public ResponseEntity<SecretResponse> readMemberSecret(@RequestHeader("Authorization") String token, @RequestBody SecretRequest request) {
-        // Remove "Bearer " prefix from token
-        token = token.replace("Bearer ", "");
+    @Autowired
+    private SecretService secretService;
 
-        // Validate JWT token
-        if (!jwtUtil.validateTokens(token)) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    @PostMapping("/read")
+    public ResponseEntity<Map<String, Object>> readSecret(@RequestBody SecretRequest request) {
+        try {
+            // Validate the input
+            secretService.validateRequest(request);
+
+            // Fetch the secret
+            SecretResponse secretResponse = secretService.readSecret(request);
+
+            return ResponseEntity.ok(secretResponse.toMap());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", e.getMessage()));
         }
-        String secret = generateRandomSecret();
-        // If token is valid, return mock secret response
-        SecretResponse response = new SecretResponse(
-            "1.0.0",
-            java.time.ZonedDateTime.now().toString(),
-            request.getTxnId(),
-            request.getEntityId(),
-            secret,
-            getCurrentTimestamp()
-        );
-
-        return ResponseEntity.ok(response);
     }
-    private String generateRandomSecret() {
-		SecureRandom secureRandom = new SecureRandom();
-		byte[] bytes = new byte[32]; // 32 bytes => 256-bit secret
-		secureRandom.nextBytes(bytes);
-		return Base64.getUrlEncoder().withoutPadding().encodeToString(bytes); // URL-safe base64 encoding
-	}
-    private String getCurrentTimestamp() {
-		return java.time.Instant.now().toString();
-	}
 
+    @PostMapping("/reset")
+    public ResponseEntity<Map<String, Object>> resetSecret(@RequestBody SecretRequest request) {
+        try {
+            // Validate the input
+            secretService.validateRequest(request);
+
+            // Reset the secret
+            SecretResponse secretResponse = secretService.resetSecret(request);
+
+            return ResponseEntity.ok(secretResponse.toMap());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", e.getMessage()));
+        }
+    }
 }

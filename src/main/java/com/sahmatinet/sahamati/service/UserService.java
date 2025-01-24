@@ -20,6 +20,7 @@ public class UserService {
 
 	private final AuthenticationManager authenticationManager;
 	private final JwtUtil jwtUtil;
+	private static final long SECRET_EXPIRATION_MILLIS = 24 * 60 * 60 * 1000; // 24 hours
 
 	@Autowired
 	private JmsTemplate jmsTemplate;
@@ -64,7 +65,7 @@ public class UserService {
 	private String callIAMTokenApi(String username, String password) {
 		String url = "/iam/v1/user/token/generate";
 		// Generate a JWT token
-		String token = jwtUtil.generateToken(username);
+		String token = jwtUtil.generateUserToken(username);
 		System.out.println("usertoken : " +token);
 		// Call the API using RestTemplate or any HTTP client
 		// Assume this method handles the POST request and maps the response to
@@ -80,6 +81,7 @@ public class UserService {
 		// headers.setContentType(MediaType.);
 		String secret = generateRandomSecret();
 		  String txnid = UUID.randomUUID().toString();
+		  long expiresOn = System.currentTimeMillis() + SECRET_EXPIRATION_MILLIS;
 		try {
 	        // Create the response object
 	        SecretResponse response = new SecretResponse(
@@ -88,7 +90,7 @@ public class UserService {
 	                txnid, 
 	                entityId,
 	                secret,
-	                getCurrentTimestamp()
+	                expiresOn
 	        );
 
 	        // Convert the response object to a JSON string

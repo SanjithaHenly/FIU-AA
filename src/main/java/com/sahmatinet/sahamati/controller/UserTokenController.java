@@ -1,5 +1,7 @@
 package com.sahmatinet.sahamati.controller;
 
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -36,12 +38,12 @@ public class UserTokenController {
 	}
 
 	@PostMapping("/token/generate")
-	public ResponseEntity<String> generateToken(@RequestParam String username, @RequestParam String password) {
+	public ResponseEntity<Map<String, Object>> generateToken(@RequestParam String username, @RequestParam String password) {
 		// Authenticate the user
 		authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
 
 		// Generate a JWT token
-		String token = jwtUtil.generateToken(username);
+		Map<String, Object> token = jwtUtil.generateToken(username);
 
 		return ResponseEntity.ok(token);
 	}
