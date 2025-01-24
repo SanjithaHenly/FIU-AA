@@ -21,9 +21,12 @@ public class SecurityConfig {
 	@Autowired
 	UserSecurityRequest securityProperties;
     private final JwtRequestFilter jwtRequestFilter;
+    
+    private final RestAuthenticationEntryPoint authenticationEntryPoint;
 
     public SecurityConfig(JwtRequestFilter jwtRequestFilter) {
         this.jwtRequestFilter = jwtRequestFilter;
+		this.authenticationEntryPoint = new RestAuthenticationEntryPoint();
     }
 
     @Bean
@@ -41,10 +44,10 @@ public class SecurityConfig {
         return http.build(); // Build the security filter chain
     }
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(); // Use BCrypt for password encoding
-    }
+//    @Bean
+//    public  PasswordEncoder passwordEncoder() {
+//        return new BCryptPasswordEncoder(); // Use BCrypt for password encoding
+//    }
 
     @Bean
     public AuthenticationManager authManager(HttpSecurity http) throws Exception {
@@ -52,8 +55,31 @@ public class SecurityConfig {
                 http.getSharedObject(AuthenticationManagerBuilder.class);
         authenticationManagerBuilder.inMemoryAuthentication()
             .withUser(securityProperties.getUsername())
-            .password(passwordEncoder().encode(securityProperties.getPassword()))
+            .password(PasswordEncoderConfig.passwordEncoder().encode(securityProperties.getPassword()))
             .roles("USER");
         return authenticationManagerBuilder.build();
+    }
+    
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+      http.csrf().disable();
+
+      http.authorizeRequests()
+           .requestMatchers("/auth/realms/sahamati/protocol/openid-connect/token")
+          .permitAll()
+          .anyRequest()
+          .authenticated()
+          .and()
+          .httpBasic()
+          .authenticationEntryPoint(authenticationEntryPoint);
+      return http.build();
+    }
+    @Autowired
+    public void configureGlobal(AuthenticationManagerBuilder auth,PasswordEncoder passwordEncoder) throws Exception {
+      auth.inMemoryAuthentication()
+              .passwordEncoder(PasswordEncoderConfig.passwordEncoder())
+              .withUser("lucidledger-01-fiu")
+              .password(PasswordEncoderConfig.passwordEncoder().encode("976qYDSY9dXZ7cgg5LkjuF9zXtoa5MFzBoxP3x54hmI="))
+              .roles("ADMIN");
     }
 }
